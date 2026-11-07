@@ -9,8 +9,8 @@ import { FaqAccordion } from "@/components/landing/FaqAccordion";
 export default function Home() {
   return (
     <div className="space-y-28 py-2 relative">
-      {/* Interactive Cursor Reactive Lines (subtle topographic flow) */}
-      <InteractiveCursorLines className="opacity-45" lineCount={36} interactiveRadius={170} />
+      {/* Interactive Cursor Reactive Lines (dense topographic flow) */}
+      <InteractiveCursorLines className="opacity-45" lineCount={72} interactiveRadius={180} />
 
       {/* Hero Section */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-6 lg:pt-12 pb-6 relative z-10">

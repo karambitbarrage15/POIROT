@@ -41,29 +41,26 @@ export const FaqAccordion: React.FC = () => {
         </h2>
       </div>
 
-      <div className="space-y-3">
+      <div className="divide-y divide-white/10 border-t border-b border-white/10">
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx;
           return (
-            <div
-              key={idx}
-              className="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden transition-colors"
-            >
+            <div key={idx} className="transition-colors">
               <button
                 suppressHydrationWarning
                 onClick={() => toggle(idx)}
-                className="w-full p-5 text-left flex items-center justify-between text-sm font-semibold text-slate-200 hover:text-cyan-400 transition-colors"
+                className="w-full py-5 text-left flex items-center justify-between text-sm sm:text-base font-medium text-slate-200 hover:text-white transition-colors"
               >
-                <span>{faq.q}</span>
+                <span className="pr-4">{faq.q}</span>
                 <ChevronDown
-                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                  className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
                     isOpen ? "rotate-180 text-cyan-400" : ""
                   }`}
                 />
               </button>
               {isOpen && (
-                <div className="px-5 pb-5 pt-0 text-xs text-slate-400 leading-relaxed border-t border-slate-800/40">
-                  <p className="pt-3">{faq.a}</p>
+                <div className="pb-5 pt-1 text-xs sm:text-sm text-[#9c91b0] leading-relaxed">
+                  <p>{faq.a}</p>
                 </div>
               )}
             </div>

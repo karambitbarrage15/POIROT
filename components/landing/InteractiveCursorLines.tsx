@@ -10,8 +10,8 @@ interface InteractiveCursorLinesProps {
 
 export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
   className = "",
-  lineCount = 36,
-  interactiveRadius = 170,
+  lineCount = 72,
+  interactiveRadius = 180,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -91,7 +91,7 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
       time += 0.015;
 
       const stepY = height / (lineCount + 1);
-      const pointsPerLine = Math.max(30, Math.floor(width / 35));
+      const pointsPerLine = Math.max(45, Math.floor(width / 22));
       const stepX = width / (pointsPerLine - 1);
 
       // Store closest points to cursor for connecting magnetic beam rays
@@ -101,7 +101,7 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
       for (let i = 0; i < lineCount; i++) {
         const baseLineY = stepY * (i + 1);
         const colorPrefix = strokeColors[i % strokeColors.length];
-        const lineOffset = i * 0.45;
+        const lineOffset = i * 0.35;
 
         ctx.beginPath();
 
@@ -110,9 +110,9 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
         for (let j = 0; j < pointsPerLine; j++) {
           const px = j * stepX;
 
-          // Ambient fluid wave equation (tighter amplitude for high density)
-          const wave1 = Math.sin(time + j * 0.16 + lineOffset) * 6;
-          const wave2 = Math.cos(time * 0.75 + j * 0.1 + i * 0.2) * 3.5;
+          // Ambient fluid wave equation (tight amplitude tuned for high density)
+          const wave1 = Math.sin(time + j * 0.14 + lineOffset) * 3.2;
+          const wave2 = Math.cos(time * 0.65 + j * 0.08 + i * 0.15) * 2;
           let py = baseLineY + wave1 + wave2;
 
           // Interactive cursor reaction: lines distort and warp as cursor moves
@@ -125,15 +125,15 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
 
               // Directional deflection: push lines away with a wave ripple
               const angle = Math.atan2(py - mouse.y, px - mouse.x);
-              const pushY = Math.sin(angle) * force * 38;
-              const pushX = Math.cos(angle) * force * 15;
+              const pushY = Math.sin(angle) * force * 24;
+              const pushX = Math.cos(angle) * force * 10;
 
               // Mouse velocity wake effect
-              const velocityPush = (mouse.vy * 0.3 + mouse.vx * 0.15) * force;
+              const velocityPush = (mouse.vy * 0.2 + mouse.vx * 0.1) * force;
 
               py += pushY + velocityPush;
 
-              if (j % 3 === 0 && distToMouse < interactiveRadius * 0.8) {
+              if (j % 4 === 0 && distToMouse < interactiveRadius * 0.75) {
                 closePoints.push({ x: px + pushX, y: py, dist: distToMouse });
               }
             }
@@ -160,11 +160,11 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
 
           // Dynamic line opacity: brighter near cursor
           const lineDistToMouse = Math.abs(baseLineY - mouse.y);
-          const isNearMouse = lineDistToMouse < interactiveRadius * 1.2;
-          const alpha = isNearMouse ? 0.45 : 0.14;
+          const isNearMouse = lineDistToMouse < interactiveRadius * 1.1;
+          const alpha = isNearMouse ? 0.38 : 0.11;
 
           ctx.strokeStyle = `${colorPrefix}${alpha})`;
-          ctx.lineWidth = isNearMouse ? 1.2 : 0.75;
+          ctx.lineWidth = isNearMouse ? 0.9 : 0.55;
           ctx.stroke();
         }
       }
