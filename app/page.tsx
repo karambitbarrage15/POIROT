@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GlowingCloudVisual } from "@/components/landing/GlowingCloudVisual";
+import { InteractiveCursorLines } from "@/components/landing/InteractiveCursorLines";
 import { SavingsCalculator } from "@/components/landing/SavingsCalculator";
 import { BentoFeatures } from "@/components/landing/BentoFeatures";
 import { ComparisonTable } from "@/components/landing/ComparisonTable";
@@ -8,8 +9,11 @@ import { FaqAccordion } from "@/components/landing/FaqAccordion";
 export default function Home() {
   return (
     <div className="space-y-28 py-2 relative">
+      {/* Interactive Cursor Reactive Lines (reacts dynamically to mouse pointer movement) */}
+      <InteractiveCursorLines className="opacity-75" lineCount={15} interactiveRadius={210} />
+
       {/* Hero Section Matching the Dribbble Shot */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-6 lg:pt-12 pb-6">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center pt-6 lg:pt-12 pb-6 relative z-10">
         {/* Left Headline & Content (7 Cols) */}
         <div className="lg:col-span-7 space-y-7 text-left">
           <h1 className="text-5xl sm:text-6xl lg:text-[76px] font-bold tracking-tight text-white leading-[1.06]">
@@ -61,27 +65,27 @@ export default function Home() {
       </section>
 
       {/* Interactive Savings Calculator */}
-      <section>
+      <section className="relative z-10">
         <SavingsCalculator />
       </section>
 
       {/* Bento Grid Feature Showcase */}
-      <section>
+      <section className="relative z-10">
         <BentoFeatures />
       </section>
 
       {/* Comparison Matrix */}
-      <section>
+      <section className="relative z-10">
         <ComparisonTable />
       </section>
 
       {/* FAQ Section */}
-      <section>
+      <section className="relative z-10">
         <FaqAccordion />
       </section>
 
       {/* High-Converting Bottom CTA Banner */}
-      <section className="relative rounded-3xl p-10 sm:p-14 bg-gradient-to-b from-[#190e2e]/60 to-[#0c0617] border border-purple-500/20 text-center space-y-6 overflow-hidden max-w-5xl mx-auto shadow-2xl">
+      <section className="relative z-10 rounded-3xl p-10 sm:p-14 bg-gradient-to-b from-[#190e2e]/60 to-[#0c0617] border border-purple-500/20 text-center space-y-6 overflow-hidden max-w-5xl mx-auto shadow-2xl">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
 
         <div className="relative space-y-4 max-w-2xl mx-auto">
