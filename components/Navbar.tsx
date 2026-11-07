@@ -29,10 +29,11 @@ export const Navbar: React.FC = () => {
   };
 
   const navLinks = [
-    { href: "/dashboard", label: "Model APIs" },
-    { href: "/dashboard", label: "Features" },
-    { href: "/dashboard/history", label: "Audit History" },
-    { href: "https://github.com/karambitbarrage15/POIROT", label: "Docs", external: true },
+    { href: "/dashboard", label: "AWS Scanner" },
+    { href: "/dashboard", label: "Live Audit" },
+    { href: "/dashboard/history", label: "Cost History" },
+    { href: "https://github.com/karambitbarrage15/POIROT#readme", label: "Documentation", external: true },
+    { href: "https://github.com/karambitbarrage15/POIROT", label: "GitHub", external: true },
   ];
 
   return (
@@ -109,7 +110,7 @@ export const Navbar: React.FC = () => {
                 href="/dashboard"
                 className="text-xs font-semibold text-white px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500 shadow-md shadow-pink-500/20 hover:brightness-110 transition-all active:scale-95"
               >
-                Get started
+                Launch Audit
               </Link>
             </div>
           )}

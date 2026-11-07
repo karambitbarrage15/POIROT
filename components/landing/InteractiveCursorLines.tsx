@@ -10,8 +10,8 @@ interface InteractiveCursorLinesProps {
 
 export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
   className = "",
-  lineCount = 14,
-  interactiveRadius = 180,
+  lineCount = 36,
+  interactiveRadius = 170,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -110,9 +110,9 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
         for (let j = 0; j < pointsPerLine; j++) {
           const px = j * stepX;
 
-          // Ambient fluid wave equation
-          const wave1 = Math.sin(time + j * 0.18 + lineOffset) * 14;
-          const wave2 = Math.cos(time * 0.8 + j * 0.12 + i * 0.3) * 8;
+          // Ambient fluid wave equation (tighter amplitude for high density)
+          const wave1 = Math.sin(time + j * 0.16 + lineOffset) * 6;
+          const wave2 = Math.cos(time * 0.75 + j * 0.1 + i * 0.2) * 3.5;
           let py = baseLineY + wave1 + wave2;
 
           // Interactive cursor reaction: lines distort and warp as cursor moves
@@ -125,11 +125,11 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
 
               // Directional deflection: push lines away with a wave ripple
               const angle = Math.atan2(py - mouse.y, px - mouse.x);
-              const pushY = Math.sin(angle) * force * 55;
-              const pushX = Math.cos(angle) * force * 20;
+              const pushY = Math.sin(angle) * force * 38;
+              const pushX = Math.cos(angle) * force * 15;
 
               // Mouse velocity wake effect
-              const velocityPush = (mouse.vy * 0.4 + mouse.vx * 0.2) * force;
+              const velocityPush = (mouse.vy * 0.3 + mouse.vx * 0.15) * force;
 
               py += pushY + velocityPush;
 
@@ -161,10 +161,10 @@ export const InteractiveCursorLines: React.FC<InteractiveCursorLinesProps> = ({
           // Dynamic line opacity: brighter near cursor
           const lineDistToMouse = Math.abs(baseLineY - mouse.y);
           const isNearMouse = lineDistToMouse < interactiveRadius * 1.2;
-          const alpha = isNearMouse ? 0.45 : 0.18;
+          const alpha = isNearMouse ? 0.45 : 0.14;
 
           ctx.strokeStyle = `${colorPrefix}${alpha})`;
-          ctx.lineWidth = isNearMouse ? 1.6 : 1.0;
+          ctx.lineWidth = isNearMouse ? 1.2 : 0.75;
           ctx.stroke();
         }
       }
