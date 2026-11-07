@@ -15,6 +15,8 @@ import {
   Loader2,
   AlertTriangle,
   RotateCcw,
+  Info,
+  ExternalLink,
 } from "lucide-react";
 
 export default function ReportPage() {
@@ -83,6 +85,10 @@ export default function ReportPage() {
   ).length;
   const highCount = findings.filter((f: any) => f.severity?.toUpperCase() === "HIGH").length;
 
+  const isDemo =
+    scanData.executiveSummary?.includes("[SIMULATED DEMO AUDIT]") ||
+    findings.some((f: any) => f.resourceName?.includes("(SIMULATED)"));
+
   return (
     <div className="space-y-8 pb-20">
       {/* Top Navigation & Meta */}
@@ -102,6 +108,11 @@ export default function ReportPage() {
             <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
               Audit #{scanData.id.substring(0, 8)}
             </span>
+            {isDemo && (
+              <span className="text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Simulated Demo
+              </span>
+            )}
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-100 flex items-center gap-2.5">
@@ -134,6 +145,30 @@ export default function ReportPage() {
           </Button>
         </div>
       </div>
+
+      {/* Demo Mode Notice Banner */}
+      {isDemo && (
+        <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-200 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-amber-300">
+            <Info className="w-4 h-4 text-amber-400" />
+            <span>Notice: Simulated FinOps Demo Data</span>
+          </div>
+          <p className="text-xs text-amber-200/90 leading-relaxed">
+            Your AWS account in <code className="font-mono bg-amber-950/60 px-1 py-0.5 rounded text-amber-100">{scanData.awsRegion}</code> currently contains <strong>0 active cloud resources</strong>. 
+            POIROT automatically loaded 5 sample FinOps waste patterns (unattached EBS disks, unassociated Elastic IPs, stopped dev VMs, dev Multi-AZ DBs) so you could preview the AI reasoning engine and copyable remediation CLI scripts.
+          </p>
+          <div className="pt-1 flex items-center gap-3 text-xs">
+            <span className="text-slate-400">Want to audit real AWS infrastructure?</span>
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="text-cyan-400 underline hover:text-cyan-300 font-medium inline-flex items-center gap-1"
+            >
+              <span>Go to Dashboard & choose an active AWS region</span>
+              <ExternalLink className="w-3 h-3" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Summary KPI Cards */}
       <SummaryCards

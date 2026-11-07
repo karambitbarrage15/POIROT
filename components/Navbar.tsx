@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ShieldAlert, Compass, History, LogOut, LogIn, ExternalLink } from "lucide-react";
+import { ShieldAlert, Compass, History, LogOut, LogIn, ExternalLink, User } from "lucide-react";
 import { Button } from "./ui/Button";
 
 export const Navbar: React.FC = () => {
@@ -102,6 +102,10 @@ export const Navbar: React.FC = () => {
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono px-2 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                <User className="w-3 h-3 text-cyan-400" />
+                <span>Guest Mode</span>
+              </span>
               <Link href="/login">
                 <Button variant="ghost" size="sm" className="gap-1.5 text-xs">
                   <LogIn className="w-3.5 h-3.5" />

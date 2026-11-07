@@ -8,9 +8,10 @@ import { scanS3 } from "./s3";
 export async function runAllScanners(
   region: string,
   options?: { allowMockFallbackIfEmpty?: boolean }
-): Promise<{ resources: CompressedResource[]; errors: string[] }> {
+): Promise<{ resources: CompressedResource[]; errors: string[]; isFallbackDemo: boolean }> {
   const errors: string[] = [];
   const allResources: CompressedResource[] = [];
+  let isFallbackDemo = false;
 
   const results = await Promise.allSettled([
     scanEC2(region),
@@ -34,6 +35,7 @@ export async function runAllScanners(
 
   // If real AWS scan returned 0 resources (e.g. fresh empty AWS account) and mock fallback is allowed
   if (allResources.length === 0 && options?.allowMockFallbackIfEmpty) {
+    isFallbackDemo = true;
     allResources.push(...getDemoResources(region));
   }
 
@@ -44,60 +46,59 @@ export async function runAllScanners(
     return bFlagsCount - aFlagsCount;
   });
 
-  // Cap at 100 resources to stay within optimal LLM prompt context size
-  return { resources: sorted.slice(0, 100), errors };
+  return { resources: sorted.slice(0, 100), errors, isFallbackDemo };
 }
 
 export function getDemoResources(region: string): CompressedResource[] {
   return [
     {
       id: "vol-0a9182bc34de5678f",
-      name: "dev-analytics-scratch-disk",
+      name: "dev-analytics-scratch-disk (SIMULATED)",
       type: "EBSVolume",
       region,
       state: "available",
       config: { sizeGB: 500, volumeType: "gp2", iops: 1500 },
-      tags: { Environment: "dev", Project: "DataLakeMigration" },
+      tags: { Environment: "dev", Project: "DataLakeMigration", Note: "Simulated Demo Resource" },
       flags: { isOrphaned: true, isGp2OldGen: true, recommendGp3Migration: true },
     },
     {
       id: "eipalloc-071a99f123456789a",
-      name: "staging-nat-public-ip",
+      name: "staging-nat-public-ip (SIMULATED)",
       type: "ElasticIP",
       region,
       state: "unassociated",
       config: { publicIp: "54.254.120.45" },
-      tags: { Environment: "staging" },
+      tags: { Environment: "staging", Note: "Simulated Demo Resource" },
       flags: { isOrphaned: true, isUnassociated: true, incursIdleCharge: true },
     },
     {
       id: "i-09f87e6d5c4b3a210",
-      name: "legacy-reporting-service",
+      name: "legacy-reporting-service (SIMULATED)",
       type: "EC2Instance",
       region,
       state: "stopped",
       config: { instanceType: "m5.4xlarge", architecture: "x86_64", publicIp: "54.251.10.88" },
-      tags: { Environment: "dev", Owner: "bi-team" },
+      tags: { Environment: "dev", Owner: "bi-team", Note: "Simulated Demo Resource" },
       flags: { isStopped: true, isLargeInDev: true, hasElasticIPAttached: true },
     },
     {
       id: "rds-staging-postgres-v1",
-      name: "staging-db-cluster",
+      name: "staging-db-cluster (SIMULATED)",
       type: "RDSInstance",
       region,
       state: "available",
       config: { instanceClass: "db.r5.2xlarge", engine: "postgres", multiAz: true, storageType: "io1" },
-      tags: { Environment: "staging", Department: "QA" },
+      tags: { Environment: "staging", Department: "QA", Note: "Simulated Demo Resource" },
       flags: { isMultiAzInDev: true, isHighCostStorage: true, recommendServerless: true },
     },
     {
       id: "corp-internal-audit-temp-logs",
-      name: "corp-internal-audit-temp-logs",
+      name: "corp-internal-audit-temp-logs (SIMULATED)",
       type: "S3Bucket",
       region,
       state: "active",
       config: { hasLifecyclePolicy: false },
-      tags: { Team: "Security" },
+      tags: { Team: "Security", Note: "Simulated Demo Resource" },
       flags: { missingLifecyclePolicy: true, riskOfUnboundedStorageGrowth: true },
     },
   ];

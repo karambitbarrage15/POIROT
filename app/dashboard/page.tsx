@@ -16,7 +16,8 @@ import {
   HardDrive,
   Layers,
   ArrowRight,
-  ExternalLink,
+  Sparkles,
+  Info,
 } from "lucide-react";
 
 interface Region {
@@ -35,6 +36,7 @@ export default function DashboardPage() {
     { id: "ap-south-1", name: "Asia Pacific (Mumbai)" },
   ]);
   const [selectedRegion, setSelectedRegion] = useState("ap-southeast-1");
+  const [allowMockFallback, setAllowMockFallback] = useState(true);
   const [isScanning, setIsScanning] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
@@ -63,10 +65,10 @@ export default function DashboardPage() {
     setCompletedScanId(null);
 
     const token = localStorage.getItem("poirot_token");
-    const url = `/api/scan/stream?region=${encodeURIComponent(selectedRegion)}`;
+    const url = `/api/scan/stream?region=${encodeURIComponent(
+      selectedRegion
+    )}&mock=${allowMockFallback}`;
 
-    // Set up EventSource or Fetch with ReadableStream
-    // Using fetch with ReadableStream allows passing custom headers like Authorization Bearer
     const headers: Record<string, string> = {};
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
@@ -108,7 +110,6 @@ export default function DashboardPage() {
                   setCurrentStep(4);
                   if (payload.scanId) {
                     setCompletedScanId(payload.scanId);
-                    // Automatically redirect to report after 2 seconds
                     setTimeout(() => {
                       router.push(`/report/${payload.scanId}`);
                     }, 2200);
@@ -181,6 +182,29 @@ export default function DashboardPage() {
                 disabled={isScanning}
               />
 
+              {/* Demo Mode Toggle with Explanatory Card */}
+              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+                <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={allowMockFallback}
+                    onChange={(e) => setAllowMockFallback(e.target.checked)}
+                    disabled={isScanning}
+                    className="mt-0.5 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500/20"
+                  />
+                  <div className="text-xs">
+                    <span className="font-semibold text-slate-200 block">
+                      Include Simulated Demo Resources if Account is Empty
+                    </span>
+                    <span className="text-slate-400 text-[11px] leading-relaxed block mt-0.5">
+                      {allowMockFallback
+                        ? "Currently ON: If AWS returns 0 resources in this region, 5 sample waste scenarios will be loaded so you can test AI analysis."
+                        : "Currently OFF: Strictly inspect real AWS resources only. If 0 resources exist in this region, the report will show clean zero-waste."}
+                    </span>
+                  </div>
+                </label>
+              </div>
+
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2.5 text-xs text-slate-400">
                 <div className="flex items-center gap-2 text-slate-200 font-medium">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -216,16 +240,6 @@ export default function DashboardPage() {
               </Button>
             </CardContent>
           </Card>
-
-          {/* Quick Info Card */}
-          <div className="p-5 rounded-xl border border-slate-800 bg-slate-900/40 text-xs text-slate-400 space-y-2">
-            <span className="text-slate-200 font-semibold block uppercase tracking-wider text-[10px]">
-              How POIROT Operates:
-            </span>
-            <p className="leading-relaxed">
-              POIROT runs read-only AWS metadata queries to extract infrastructure states without altering any resources. The compressed snapshot is dispatched to Meta Llama 3.3 70B via OpenRouter for FinOps reasoning and remediation synthesis.
-            </p>
-          </div>
         </div>
 
         {/* Right Stream / Progress Column */}

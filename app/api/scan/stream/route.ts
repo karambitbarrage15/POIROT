@@ -9,17 +9,18 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const region = searchParams.get("region") || process.env.AWS_DEFAULT_REGION || "ap-southeast-1";
-  const allowMock = searchParams.get("mock") === "true" || true;
+  const allowMock = searchParams.get("mock") !== "false";
 
   // Resolve user
   let user = await getUserFromRequest(req);
+  let isGuest = false;
   if (!user) {
-    // Demo/guest fallback user so testing never blocks
+    isGuest = true;
     let demoUser = await getUserByEmail("guest@poirot.ai");
     if (!demoUser) {
       demoUser = await createUser({
         email: "guest@poirot.ai",
-        name: "Demo Investigator",
+        name: "Guest Investigator",
         passwordHash: "demo-hash-not-used",
       });
     }
@@ -46,7 +47,8 @@ export async function GET(req: NextRequest) {
         sendEvent("INIT", {
           step: 1,
           totalSteps: 4,
-          message: `Authenticating AWS session for target region ${region}...`,
+          message: `Authenticating AWS credentials for region ${region}...`,
+          isGuest,
         });
 
         // Initialize scan in database
@@ -64,25 +66,27 @@ export async function GET(req: NextRequest) {
           console.warn("DB init scan warning:", dbErr?.message);
         }
 
-        // Wait a brief moment for smooth UX visual feedback
-        await new Promise((r) => setTimeout(r, 600));
+        await new Promise((r) => setTimeout(r, 500));
 
         // Step 2: SCANNING
         sendEvent("SCANNING", {
           step: 2,
           totalSteps: 4,
-          message: `Inspecting active inventory across EC2, EBS, RDS, S3 in ${region}...`,
+          message: `Inspecting active AWS resources in ${region}...`,
         });
 
-        const { resources, errors } = await runAllScanners(region, {
+        const { resources, errors, isFallbackDemo } = await runAllScanners(region, {
           allowMockFallbackIfEmpty: allowMock,
         });
 
         sendEvent("SCANNING_PROGRESS", {
           step: 2,
           totalSteps: 4,
-          message: `Retrieved and compressed ${resources.length} resource configurations.`,
+          message: isFallbackDemo
+            ? `AWS returned 0 resources in ${region}. Loaded 5 simulated FinOps test resources for demonstration.`
+            : `Scanned and minified ${resources.length} active AWS resources in ${region}.`,
           count: resources.length,
+          isFallbackDemo,
           warnings: errors.length > 0 ? errors : undefined,
         });
 
@@ -92,7 +96,8 @@ export async function GET(req: NextRequest) {
         sendEvent("ANALYZING", {
           step: 3,
           totalSteps: 4,
-          message: `Dispatching ${resources.length} resources to OpenRouter FinOps engine (Llama 3.3 70B)...`,
+          message: `Dispatching ${resources.length} resources to OpenRouter Meta Llama 3.3 70B...`,
+          isFallbackDemo,
         });
 
         const analysis = await analyzeInventoryWithAI(resources, region);
@@ -101,8 +106,12 @@ export async function GET(req: NextRequest) {
         sendEvent("STORING", {
           step: 4,
           totalSteps: 4,
-          message: `Persisting audit report & ${analysis.findings.length} findings to Neon PostgreSQL...`,
+          message: `Saving audit report to Neon PostgreSQL...`,
         });
+
+        const executiveSummaryWithTag = isFallbackDemo
+          ? `[SIMULATED DEMO AUDIT] Your AWS account in ${region} currently has 0 active resources. Showing simulated FinOps waste data for demonstration: ${analysis.executiveSummary}`
+          : analysis.executiveSummary;
 
         if (scanId) {
           try {
@@ -111,7 +120,7 @@ export async function GET(req: NextRequest) {
               resourcesScanned: analysis.resourcesAnalyzed,
               findingsCount: analysis.findings.length,
               totalMonthlyWasteUsd: analysis.totalMonthlyWasteUSD.toFixed(2),
-              executiveSummary: analysis.executiveSummary,
+              executiveSummary: executiveSummaryWithTag,
               completedAt: new Date(),
             });
 
@@ -142,15 +151,14 @@ export async function GET(req: NextRequest) {
         sendEvent("COMPLETE", {
           step: 4,
           totalSteps: 4,
-          message: `Audit completed successfully. Found $${analysis.totalMonthlyWasteUSD.toFixed(
-            2
-          )}/mo in potential savings!`,
+          message: `Audit complete. Found $${analysis.totalMonthlyWasteUSD.toFixed(2)}/mo in potential savings!`,
           scanId,
+          isFallbackDemo,
           summary: {
             resourcesScanned: analysis.resourcesAnalyzed,
             findingsCount: analysis.findings.length,
             totalMonthlyWasteUSD: analysis.totalMonthlyWasteUSD,
-            executiveSummary: analysis.executiveSummary,
+            executiveSummary: executiveSummaryWithTag,
           },
         });
       } catch (err: any) {
