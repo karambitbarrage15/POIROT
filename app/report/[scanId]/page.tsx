@@ -79,7 +79,7 @@ export default function ReportPage() {
   }
 
   const findings = scanData.findings || [];
-  const wasteNum = parseFloat(scanData.totalMonthlyWasteUsd) || 0;
+  const wasteNum = parseFloat(scanData.totalMonthlyWasteUsd ?? scanData.totalMonthlyWasteUSD) || 0;
   const criticalCount = findings.filter(
     (f: any) => f.severity?.toUpperCase() === "CRITICAL"
   ).length;

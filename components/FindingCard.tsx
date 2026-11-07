@@ -4,7 +4,7 @@ import React from "react";
 import { Badge } from "./ui/Badge";
 import { CodeBlock } from "./CodeBlock";
 import { formatCurrency } from "@/lib/utils";
-import { AlertCircle, ShieldAlert, Database, HardDrive, Server, Globe2, FolderArchive } from "lucide-react";
+import { AlertCircle, ShieldAlert, Database, HardDrive, Server, Globe2, FolderArchive, Network } from "lucide-react";
 
 export interface FindingItem {
   id?: string;
@@ -16,7 +16,8 @@ export interface FindingItem {
   category: "ORPHANED" | "OVERPROVISIONED" | "MISCONFIGURED" | "LIFECYCLE" | "IDLE" | string;
   issueTitle: string;
   explanation: string;
-  estimatedMonthlyWasteUSD: number | string;
+  estimatedMonthlyWasteUSD?: number | string;
+  estimatedMonthlyWasteUsd?: number | string;
   remediationCommand?: string | null;
   riskAssessment?: string | null;
 }
@@ -26,10 +27,11 @@ interface FindingCardProps {
 }
 
 export const FindingCard: React.FC<FindingCardProps> = ({ finding }) => {
+  const rawWaste = finding.estimatedMonthlyWasteUSD ?? finding.estimatedMonthlyWasteUsd ?? 0;
   const wasteAmount =
-    typeof finding.estimatedMonthlyWasteUSD === "number"
-      ? finding.estimatedMonthlyWasteUSD
-      : parseFloat(finding.estimatedMonthlyWasteUSD) || 0;
+    typeof rawWaste === "number"
+      ? rawWaste
+      : parseFloat(String(rawWaste)) || 0;
 
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -43,6 +45,8 @@ export const FindingCard: React.FC<FindingCardProps> = ({ finding }) => {
         return <Globe2 className="w-4 h-4 text-purple-400" />;
       case "s3bucket":
         return <FolderArchive className="w-4 h-4 text-emerald-400" />;
+      case "loadbalancer":
+        return <Network className="w-4 h-4 text-pink-400" />;
       default:
         return <AlertCircle className="w-4 h-4 text-slate-400" />;
     }

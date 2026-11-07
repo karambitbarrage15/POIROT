@@ -208,6 +208,21 @@ function generateRuleBasedAnalysis(resources: CompressedResource[], region: stri
         remediationCommand: `aws s3api put-bucket-lifecycle-configuration --bucket ${r.id} --lifecycle-configuration file://lifecycle.json`,
         riskAssessment: `Determine compliance retention requirements prior to enabling automatic expiration.`,
       });
+    } else if (r.type === "LoadBalancer" && r.flags.isOrphaned) {
+      totalWaste += 22.50;
+      findings.push({
+        resourceId: r.id,
+        resourceName: r.name,
+        resourceType: "LoadBalancer",
+        region,
+        severity: "HIGH",
+        category: "ORPHANED",
+        issueTitle: `Active Load Balancer with zero backend targets`,
+        explanation: `Application Load Balancer is provisioned and active, but has no healthy target EC2/ECS instances, generating ~$22.50/mo in idle fixed fees.`,
+        estimatedMonthlyWasteUSD: 22.50,
+        remediationCommand: `aws elbv2 delete-load-balancer --load-balancer-arn ${r.id} --region ${region}`,
+        riskAssessment: `Verify that no DNS records or Ingress controllers are routing production traffic to this endpoint.`,
+      });
     }
   }
 

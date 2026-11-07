@@ -4,6 +4,7 @@ import { scanEBS } from "./ebs";
 import { scanEIPs } from "./eip";
 import { scanRDS } from "./rds";
 import { scanS3 } from "./s3";
+import { scanLoadBalancers } from "./elb";
 
 export async function runAllScanners(
   region: string,
@@ -19,9 +20,10 @@ export async function runAllScanners(
     scanEIPs(region),
     scanRDS(region),
     scanS3(region),
+    scanLoadBalancers(region),
   ]);
 
-  const serviceNames = ["EC2", "EBS", "ElasticIPs", "RDS", "S3"];
+  const serviceNames = ["EC2", "EBS", "ElasticIPs", "RDS", "S3", "ELB"];
 
   results.forEach((res, index) => {
     if (res.status === "fulfilled") {
@@ -100,6 +102,16 @@ export function getDemoResources(region: string): CompressedResource[] {
       config: { hasLifecyclePolicy: false },
       tags: { Team: "Security", Note: "Simulated Demo Resource" },
       flags: { missingLifecyclePolicy: true, riskOfUnboundedStorageGrowth: true },
+    },
+    {
+      id: "alb-dev-k8s-ingress-orphaned",
+      name: "dev-k8s-ingress-alb (SIMULATED)",
+      type: "LoadBalancer",
+      region,
+      state: "active",
+      config: { type: "application", scheme: "internet-facing", targetCount: 0, hasHealthyBackends: false },
+      tags: { Environment: "dev", Note: "Simulated Demo Resource" },
+      flags: { isOrphaned: true, hasZeroTargets: true, incursIdleCharge: true },
     },
   ];
 }
