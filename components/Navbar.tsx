@@ -89,6 +89,7 @@ export const Navbar: React.FC = () => {
                 {userEmail}
               </span>
               <button
+                suppressHydrationWarning
                 onClick={handleSignOut}
                 className="text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-full hover:bg-white/5 transition-colors flex items-center gap-1"
               >

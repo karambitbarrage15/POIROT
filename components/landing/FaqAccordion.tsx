@@ -53,6 +53,7 @@ export const FaqAccordion: React.FC = () => {
               className="rounded-2xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden transition-colors"
             >
               <button
+                suppressHydrationWarning
                 onClick={() => toggle(idx)}
                 className="w-full p-5 text-left flex items-center justify-between text-sm font-semibold text-slate-200 hover:text-cyan-400 transition-colors"
               >

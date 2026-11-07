@@ -74,6 +74,7 @@ export const FindingsList: React.FC<FindingsListProps> = ({ findings }) => {
             return (
               <button
                 key={sev}
+                suppressHydrationWarning
                 onClick={() => setSelectedSeverity(sev)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                   isSelected

@@ -48,6 +48,7 @@ export const HeroConsoleMockup: React.FC = () => {
 
           <div className="flex items-center gap-1.5 bg-slate-950/80 border border-slate-800 rounded-lg p-1 text-[11px] font-mono">
             <button
+              suppressHydrationWarning
               onClick={() => setActiveTab("overview")}
               className={`px-2.5 py-1 rounded-md transition-colors ${
                 activeTab === "overview"
@@ -58,6 +59,7 @@ export const HeroConsoleMockup: React.FC = () => {
               Overview
             </button>
             <button
+              suppressHydrationWarning
               onClick={() => setActiveTab("telemetry")}
               className={`px-2.5 py-1 rounded-md transition-colors ${
                 activeTab === "telemetry"
@@ -68,6 +70,7 @@ export const HeroConsoleMockup: React.FC = () => {
               Live Telemetry
             </button>
             <button
+              suppressHydrationWarning
               onClick={() => setActiveTab("fixes")}
               className={`px-2.5 py-1 rounded-md transition-colors ${
                 activeTab === "fixes"
@@ -252,6 +255,7 @@ export const HeroConsoleMockup: React.FC = () => {
                   <div className="flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg text-cyan-300 border border-slate-800/80">
                     <code className="text-[11px] truncate">{fix.cmd}</code>
                     <button
+                      suppressHydrationWarning
                       onClick={() => copyCommand(fix.cmd, idx)}
                       className="ml-2 text-slate-400 hover:text-cyan-400 transition-colors"
                       title="Copy"

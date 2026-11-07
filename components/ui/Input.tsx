@@ -25,6 +25,7 @@ export const Input: React.FC<InputProps> = ({
       )}
       <input
         id={id}
+        suppressHydrationWarning
         className={cn(
           "flex h-10 w-full rounded-lg border border-slate-800 bg-slate-950/70 px-3.5 py-2 text-sm text-slate-100 placeholder:text-slate-500",
           "focus:border-cyan-500/60 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-150",
