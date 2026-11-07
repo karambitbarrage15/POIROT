@@ -18,9 +18,6 @@ export const SavingsCalculator: React.FC = () => {
     <div className="w-full max-w-4xl mx-auto py-8 space-y-10">
       {/* Title & Context */}
       <div className="text-center space-y-3 max-w-xl mx-auto">
-        <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-950/40 border border-cyan-800/40">
-          Interactive ROI Calculator
-        </span>
         <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
           How much cloud budget are you burning?
         </h3>

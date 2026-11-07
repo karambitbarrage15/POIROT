@@ -52,9 +52,6 @@ export const ComparisonTable: React.FC = () => {
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest bg-cyan-950/60 border border-cyan-800/60 px-3 py-1 rounded-full">
-          The Competitive Edge
-        </span>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-100">
           Why traditional billing tools leave money on the table.
         </h2>

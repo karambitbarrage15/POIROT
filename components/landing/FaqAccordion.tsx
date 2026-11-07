@@ -36,9 +36,6 @@ export const FaqAccordion: React.FC = () => {
   return (
     <div className="w-full max-w-3xl mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest bg-cyan-950/60 border border-cyan-800/60 px-3 py-1 rounded-full">
-          Frequently Asked Questions
-        </span>
         <h2 className="text-3xl font-extrabold text-slate-100">
           Everything you need to know.
         </h2>

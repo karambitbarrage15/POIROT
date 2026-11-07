@@ -46,9 +46,6 @@ export const BentoFeatures: React.FC = () => {
     <div className="space-y-12 max-w-6xl mx-auto py-10">
       {/* Clean Header */}
       <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <span className="text-xs font-mono text-purple-400 uppercase tracking-widest px-3 py-1 rounded-full bg-purple-950/40 border border-purple-800/40">
-          Core FinOps Architecture
-        </span>
         <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
           Engineered for teams who hate cloud waste.
         </h2>
