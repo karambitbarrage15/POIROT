@@ -40,3 +40,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# private interview prep guide
+INTERVIEW_PREP_GUIDE.md
